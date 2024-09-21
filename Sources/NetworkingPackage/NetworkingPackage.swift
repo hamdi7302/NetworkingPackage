@@ -9,18 +9,27 @@ enum NetworkError: Error {
     case networkError
     case unkownError
     case unvalidUrl
+    case notimplementedyet
     
 }
 
-protocol NetworkService{
-    func request<T:Decodable>(endoint: String) -> AnyPublisher<T, NetworkError>
+protocol NetworkService {
+    func request<T:Decodable>(endoint: String, headers:[String:String]?) -> AnyPublisher<T, NetworkError>
 }
 
-struct DefaultNetworkService: NetworkService {
-    func request<T>(endoint: String) -> AnyPublisher<T, NetworkError> where T : Decodable {
+struct NetworkManager: NetworkService {
+    func request<T>(endoint: String,headers:[String:String]? = nil) -> AnyPublisher<T, NetworkError> where T : Decodable {
         
-        guard let urlReq = URL(string: endoint) else {
+        guard let url =  URL(string: endoint) else {
             return Fail(error: NetworkError.unvalidUrl).eraseToAnyPublisher()
+        }
+        
+        var urlReq = URLRequest(url: url,timeoutInterval: 25)
+        
+        if let headers = headers {
+            headers.forEach { (key: String, value: String) in
+                urlReq.addValue(value, forHTTPHeaderField: key)
+            }
         }
         
         let res = URLSession.shared.dataTaskPublisher(for: urlReq)
@@ -40,22 +49,83 @@ struct UserInfo: Decodable {
     var password: String
 }
 
-protocol AuthServiceProtocol {
-    func login(username: String, password: String) -> AnyPublisher<UserInfo, NetworkError>
+struct createSessinForUser{
+    var success: Bool
+    var expires_at: String
+    var request_token: String
+    
 }
 
-//  may be need to chane to class later
-struct AuthService: AuthServiceProtocol {
-    
-    let networkService: NetworkService
-    
-    init(networkService: NetworkService) {
-        self.networkService = networkService
-    }
-    
-    func login(username: String, password: String) -> AnyPublisher<UserInfo, NetworkError> {
-        let endoint = ""
-        return networkService.request(endoint: "")
-    }
+protocol AuthProtocol {
+ 
+    // Step 1
+    func createRequestToken() -> AnyPublisher<createSessinForUser, NetworkError>
+    //  step 2
+    //https://www.themoviedb.org/authenticate/a10d5f0b2ce15afefda0275dc6b4ad76f261c9c5
+    //redirect the user to  https://www.themoviedb.org/authenticate/{REQUEST_TOKEN}
+    //  step3
+    func createUserSession()
+    //https://api.themoviedb.org/3/authentication/session/new
     
 }
+
+struct AuthReqToken: AuthProtocol {
+    func createUserSession() {
+//        curl --request GET \
+//             --url https://api.themoviedb.org/3/authentication/token/new \
+//             --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MjE1Nzc1ZTk4NzBmMDI2Mjc1YjI4ZDdjMjVhNjlhNyIsIm5iZiI6MTcyNjk0MDczMS4wNzQxNzIsInN1YiI6IjVlNTkxNDAyYTkzZDI1MDAxNzU1NjhkMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.o7Q9TVJ_Q7M1mbIHociYKb7eVtf4Wxy6mCa3EmY8vCk' \
+//             --header 'accept: application/json'
+    }
+    
+    func createRequestToken() -> AnyPublisher<createSessinForUser, NetworkError> {
+//        curl --request POST \
+//             --url https://api.themoviedb.org/3/authentication/session/new \
+//             --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MjE1Nzc1ZTk4NzBmMDI2Mjc1YjI4ZDdjMjVhNjlhNyIsIm5iZiI6MTcyNjk0MDczMS4wNzQxNzIsInN1YiI6IjVlNTkxNDAyYTkzZDI1MDAxNzU1NjhkMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.o7Q9TVJ_Q7M1mbIHociYKb7eVtf4Wxy6mCa3EmY8vCk' \
+//             --header 'accept: application/json' \
+//             --header 'content-type: application/json'
+        return AnyPublisher(Fail(error: NetworkError.notimplementedyet)).eraseToAnyPublisher()
+        
+    }
+}
+
+struct Movie: Decodable{
+    
+}
+
+protocol AppService {
+    func fetchmovies () -> AnyPublisher<[Movie],NetworkError>
+}
+
+struct MovieNetworkManager: AppService {
+    
+    let networkManager: NetworkManager
+    
+    init(networkService: NetworkService) {
+        self.networkManager = NetworkManager()
+    }
+   
+    func fetchmovies() -> AnyPublisher<[Movie], NetworkError> {
+        let endoint = ""
+        return networkManager.request(endoint: endoint, headers: ["token" : AuthManager.shared.getAuthToken()])
+    }
+}
+
+class AuthManager {
+    
+    static var shared = AuthManager()
+    
+    private var authToken: String?
+    
+    func getAuthToken() -> String  {
+        return ""
+    }
+    
+    func setAuthToken() {
+        // set token in keychain
+    }
+    
+    func createReqToken() {
+        // return qpp qdmiin user session to use in Creqte req token
+    }
+}
+
