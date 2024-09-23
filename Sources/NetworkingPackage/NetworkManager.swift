@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Combine
 
 enum Authmethod: String {
     case get = "GET"

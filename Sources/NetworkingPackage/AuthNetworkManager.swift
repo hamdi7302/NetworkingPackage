@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 
 public struct CreateSessionForUser: Decodable{
@@ -40,7 +41,7 @@ public class AuthNetworkManager: AuthProtocol {
     public func createUserSession() -> AnyPublisher<SessionForUser,NetworkError>{
         let endoint = "https://api.themoviedb.org/3/authentication/session/new?api_key="
         
-        var headers: [String:String]
+        var headers: [String:String] = [:]
         headers["accept"] = "application/json"
         headers["Content-Type"] = "application/json"
         
