@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  KeychainManager.swift
 //  
 //
 //  Created by hamdi on 24/9/2024.
@@ -8,8 +8,8 @@
 import Foundation
 
 public struct KeychainManager {
-    private static let  serviceName = "MyMovieApp"
-    public static func save(session: Session) -> OSStatus {
+    private  let  serviceName = "MyMovieApp"
+    public func save(session: Session) -> OSStatus {
         
         guard let sessionData = try? JSONEncoder().encode(session) else {
             return errSecParam
@@ -25,7 +25,7 @@ public struct KeychainManager {
         return SecItemAdd(query as CFDictionary, nil)
     }
     
-    public static func retrieve(by serviceName: String) -> (data: Data?, error: OSStatus) {
+    public  func retrieve() -> (data: Data?, error: OSStatus) {
         
         let query: [String:Any] = [
             kSecClass as String: kSecClassGenericPassword,

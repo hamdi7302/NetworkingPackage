@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  NetworkManager.swift
+//
 //
 //  Created by hamdi on 23/9/2024.
 //
@@ -8,18 +8,12 @@
 import Foundation
 import Combine
 
-enum Authmethod: String {
-    case get = "GET"
-    case post = "POST"
-    case delete = "DELETE"
-}
-
-
 protocol NetworkService {
     func request<T:Decodable>(endoint: String, authmethod: Authmethod, headers:[String:String]?, params: [String:String]?) -> AnyPublisher<T, NetworkError>
 }
 
 struct NetworkManager: NetworkService {
+  
     func request<T>(endoint: String, authmethod: Authmethod = .get, headers:[String:String]? = nil, params: [String:String]? = nil) -> AnyPublisher<T, NetworkError> where T : Decodable {
         
         guard let url =  URL(string: endoint) else {

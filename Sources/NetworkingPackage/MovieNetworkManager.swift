@@ -1,5 +1,10 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+//
+//  MovieNetworkManager.swift
+//
+//
+//  Created by hamdi on 24/9/2024.
+//
+
 
 import SwiftUI
 import Combine
@@ -26,7 +31,7 @@ struct Movie: Decodable{
 }
 
 protocol AppService {
-    func fetchmovies () -> AnyPublisher<[Movie],NetworkError>
+//    func fetchmovies () -> AnyPublisher<[Movie],NetworkError>
 }
 
 struct MovieNetworkManager: AppService {
@@ -37,9 +42,9 @@ struct MovieNetworkManager: AppService {
         self.networkManager = NetworkManager()
     }
    
-    func fetchmovies() -> AnyPublisher<[Movie], NetworkError> {
-        let endoint = ""
-        return networkManager.request(endoint: endoint, headers: ["token" : AuthManager.shared.getAuthToken()])
-    }
+//    func fetchmovies() -> AnyPublisher<[Movie], NetworkError> {
+//        let endoint = ""
+//        return networkManager.request(endoint: endoint, headers: ["token" : AuthManager.shared.getAuthToken()])
+//    }
 }
 
