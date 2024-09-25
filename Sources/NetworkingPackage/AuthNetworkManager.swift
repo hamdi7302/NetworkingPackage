@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 
-
 public struct CreateSessionForUser: Decodable{
     public var success: Bool
     public var expires_at: String
@@ -75,6 +74,6 @@ public class AuthNetworkManager: AuthProtocol {
         headers["accept"] = "application/json"
         return networkManager.request(endoint: endoint,
                                       headers: headers)
-    }
-    
+    }    
 }
+

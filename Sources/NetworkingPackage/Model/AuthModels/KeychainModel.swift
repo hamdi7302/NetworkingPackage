@@ -13,7 +13,7 @@ public struct Session: Codable{
     let guestSession: Bool
 }
 
-enum SessionStatus: Error{
+public enum SessionStatus: Error{
     case noSession
     case sessionExipred
 }

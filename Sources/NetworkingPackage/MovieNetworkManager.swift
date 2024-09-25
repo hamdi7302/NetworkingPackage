@@ -15,9 +15,7 @@ public enum NetworkError: Error {
     case unkownError
     case unvalidUrl
     case notimplementedyet
-    
 }
-
 
 struct UserInfo: Decodable {
     var username: String
@@ -25,26 +23,31 @@ struct UserInfo: Decodable {
     var password: String
 }
 
-
-struct Movie: Decodable{
-    
+public enum TrendingType: String {
+    case day
+    case week
 }
 
 protocol AppService {
-//    func fetchmovies () -> AnyPublisher<[Movie],NetworkError>
+    func fetchAllTrending (trendingType: TrendingType) -> AnyPublisher<TrendingMovies,NetworkError>
 }
 
-struct MovieNetworkManager: AppService {
+public class MovieNetworkManager: AppService {
     
+    private let apiKey = "c8eeea30d19c18b002f6f906e9c17475"
     let networkManager: NetworkManager
     
-    init(networkService: NetworkService) {
+    public func fetchAllTrending(trendingType: TrendingType) -> AnyPublisher<TrendingMovies, NetworkError> {
+        
+        var endoint = "https://api.themoviedb.org/3/trending/movie/\(trendingType)"
+        endoint.append("?api_key=\(apiKey)") // to remove and append header user session
+        
+        // to replace token with user token
+        return networkManager.request(endoint: endoint)
+    }
+   public init() {
         self.networkManager = NetworkManager()
     }
-   
-//    func fetchmovies() -> AnyPublisher<[Movie], NetworkError> {
-//        let endoint = ""
-//        return networkManager.request(endoint: endoint, headers: ["token" : AuthManager.shared.getAuthToken()])
-//    }
 }
 
+// https://image.tmdb.org/t/p/w500/
