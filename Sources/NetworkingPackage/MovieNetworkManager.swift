@@ -31,7 +31,7 @@ public enum TrendingType: String {
 
 
 public struct Genres: Decodable {
-    let genres: [Genre]
+    public let genres: [Genre]
 }
 
 // MARK: - Genre
@@ -55,8 +55,8 @@ public class MovieNetworkManager: AppService {
     
     // inclsue as @EnvironmentObject  in Datamodel  with the type tv or movies
     public func fetchMoviesGenre(forMovie: GenreType) -> AnyPublisher<Genres,NetworkError> {
-        var endoint = "'https://api.themoviedb.org/3/genre/\(forMovie)/list?language=en'"
-        endoint.append("?api_key=\(apiKey)") // to remove and append header user session
+        var endoint = "https://api.themoviedb.org/3/genre/\(forMovie)/list"
+        endoint.append("?api_key=\(apiKey)&language=en") // to remove and append header user session
         // to replace token with user token
         return networkManager.request(endoint: endoint)
     }
