@@ -15,6 +15,7 @@ public enum NetworkError: Error {
     case unkownError
     case unvalidUrl
     case notimplementedyet
+    case unableTofetchImage
 }
 
 struct UserInfo: Decodable {
@@ -30,9 +31,19 @@ public enum TrendingType: String {
 
 protocol AppService {
     func fetchAllTrending (trendingType: TrendingType) -> AnyPublisher<TrendingMovies,NetworkError>
+    func fetchImage(posterPath : String) -> AnyPublisher <UIImage?,NetworkError>
 }
 
 public class MovieNetworkManager: AppService {
+    
+    public func fetchImage(posterPath: String) -> AnyPublisher <UIImage?,NetworkError> {
+        var endoint = "https://image.tmdb.org/t/p/w1280\(posterPath)"
+        // to remove and append header user session
+        
+        // to replace token with user token
+        return networkManager.fetchAndCacheImage(endoint: endoint)
+    }
+    
     
     private let apiKey = "c8eeea30d19c18b002f6f906e9c17475"
     let networkManager: NetworkManager
@@ -50,4 +61,4 @@ public class MovieNetworkManager: AppService {
     }
 }
 
-// https://image.tmdb.org/t/p/w500/
+ 
