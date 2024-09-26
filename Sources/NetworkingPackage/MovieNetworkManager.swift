@@ -36,8 +36,8 @@ public struct Genres: Decodable {
 
 // MARK: - Genre
 public struct Genre: Decodable {
-    let id: Int
-    let name: String
+    public let id: Int
+    public let name: String
 }
 
 public enum GenreType: String {

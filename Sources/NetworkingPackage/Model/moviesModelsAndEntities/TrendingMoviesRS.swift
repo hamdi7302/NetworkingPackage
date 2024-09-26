@@ -31,7 +31,7 @@ public struct ResultCard: Codable, Hashable {
     public let mediaType: MediaType
     let adult: Bool
     let originalLanguage: String
-    let genreIDS: [Int]
+    public let genreIDS: [Int]
     let popularity: Double
     public let releaseDate: String
     let video: Bool
@@ -58,6 +58,7 @@ public struct ResultCard: Codable, Hashable {
 
 public enum MediaType: String, Codable {
     case movie = "movie"
+    case tv = "tv"
 }
 
 //public enum OriginalLanguage: String, Codable {
