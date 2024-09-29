@@ -9,13 +9,24 @@ import Foundation
 import Combine
 import UIKit
 
-protocol NetworkService {
-    func request<T:Decodable>(endoint: String, authmethod: Authmethod, headers:[String:String]?, params: [String:String]?) -> AnyPublisher<T, NetworkError>
+public enum NetworkError: Error {
+    case decodableError
+    case networkError
+    case unkownError
+    case unvalidUrl
+    case notimplementedyet
+    case unableTofetchImage
 }
 
-struct NetworkManager: NetworkService {
+
+protocol NetworkService {
+    func request<T:Decodable>(endoint: String, authmethod: Authmethod, headers:[String:String]?, params: [String:Any]?) -> AnyPublisher<T, NetworkError>
+}
+
+public struct NetworkManager: NetworkService {
+    public init(){}
   
-    func request<T>(endoint: String, authmethod: Authmethod = .get, headers:[String:String]? = nil, params: [String:String]? = nil) -> AnyPublisher<T, NetworkError> where T : Decodable {
+     public func request<T>(endoint: String, authmethod: Authmethod = .get, headers:[String:String]? = nil, params: [String:Any]? = nil) -> AnyPublisher<T, NetworkError> where T : Decodable {
         
         guard let url =  URL(string: endoint) else {
             return Fail(error: NetworkError.unvalidUrl).eraseToAnyPublisher()
@@ -51,7 +62,7 @@ struct NetworkManager: NetworkService {
         return res
     }
     
-    func fetchAndCacheImage (endoint: String, authmethod: Authmethod = .get, headers:[String:String]? = nil) -> AnyPublisher<UIImage?, NetworkError> {
+    public func fetchAndCacheImage (endoint: String, authmethod: Authmethod = .get, headers:[String:String]? = nil) -> AnyPublisher<UIImage?, NetworkError> {
         
         guard let url =  URL(string: endoint) else {
             return Fail(error: NetworkError.unvalidUrl).eraseToAnyPublisher()
