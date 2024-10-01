@@ -37,9 +37,16 @@ public struct NetworkManager: NetworkService {
         if let headers = headers {
             headers.forEach { (key: String, value: String) in
                 urlReq.addValue(value, forHTTPHeaderField: key)
+                
+                
             }
+        }else if authmethod == .post {
+            // temp to test sometine api key in some service not  permitted ny tmdb
+            urlReq.setValue("application/json", forHTTPHeaderField: "Accept")
+            urlReq.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlReq.setValue("Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNGE4OGEyMWFiN2MzNTE1ZTUwN2Q5ZWE2NGQ4ZDg3OCIsIm5iZiI6MTcyNzgyMzkxMC4wNzQ5OTEsInN1YiI6IjVlNTkxNDAyYTkzZDI1MDAxNzU1NjhkMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KITBRr1iAThYItOQE7CMxykQ-4FQI22L_H9jIqZ9TTQ", forHTTPHeaderField: "Authorization") // Temoparly
         }
-        
+
       
         if let dictParams =  params , let jsonParams = try?  JSONSerialization.data(withJSONObject: dictParams, options: []){
             urlReq.httpBody = jsonParams
@@ -49,8 +56,8 @@ public struct NetworkManager: NetworkService {
             .handleEvents(receiveOutput: { output in
                 // Print the HTTP response
                 if let httpResponse = output.response as? HTTPURLResponse {
-                    print("Response Status Code: \(httpResponse.statusCode)")
-                    print("Response Headers: \(httpResponse.allHeaderFields)")
+                    print("⚠️❗ Response Status Code: \(httpResponse.statusCode)")
+                    print("⚠️❗ Response Headers: \(httpResponse.allHeaderFields)")
                 }
             })
             .map(\.data)
