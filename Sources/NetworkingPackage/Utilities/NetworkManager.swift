@@ -64,9 +64,33 @@ public struct NetworkManager: NetworkService {
             })
             .map(\.data)
             .decode(type: T.self, decoder: JSONDecoder())
+         
             .mapError { error in
-                return   error is DecodingError ? NetworkError.decodableError : NetworkError.unkownError
-            }.eraseToAnyPublisher()
+                         if let decodingError = error as? DecodingError {
+                             print("Decoding Error: \(decodingError)")
+                             switch decodingError {
+                             case .dataCorrupted(let context):
+                                 print("Data corrupted: \(context.debugDescription)")
+                             case .keyNotFound(let key, let context):
+                                 print("Key '\(key)' not found: \(context.debugDescription), codingPath: \(context.codingPath)")
+                             case .typeMismatch(let type, let context):
+                                 print("Type '\(type)' mismatch: \(context.debugDescription), codingPath: \(context.codingPath)")
+                             case .valueNotFound(let value, let context):
+                                 print("Value '\(value)' not found: \(context.debugDescription), codingPath: \(context.codingPath)")
+                             @unknown default:
+                                 print("Unknown decoding error")
+                             }
+
+                             return NetworkError.decodableError
+                         }
+                         print("Network/Other Error: \(error)")
+                         return NetworkError.unkownError
+                     }
+         
+//            .mapError { error in
+//                return   error is DecodingError ? NetworkError.decodableError : NetworkError.unkownError
+//            }
+            .eraseToAnyPublisher()
         
         return res
     }
